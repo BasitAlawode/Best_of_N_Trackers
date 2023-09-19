@@ -1,2 +1,6 @@
-# Best_of_N_Trackers
+# Best of the N-Trackers
+
+This repository details our work on tracker predictor "Best of the N-Trackers
+
+Trackers: 
  
