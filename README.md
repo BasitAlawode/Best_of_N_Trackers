@@ -1,18 +1,41 @@
 -- Repository still under construction...
 
-# Best of the N-Trackers
+# Predicting the Best of the *N* Visual Trackers
 
-This work predicts the best tracker from a list of N available trackers that can best be used to track a given object in a sequence.
+This repository provides all codes and resources on our work on **Predicting the best of _N_ Trackers (*BofN*)**.
 
-Available Trackers: 
 
-1. [ARDiMP](https://github.com/MasterBin-IIAU/AlphaRefine)
-2. [KeepTrack](https://github.com/visionml/pytracking)
-3. [STMTrack](https://github.com/fzh0917/STMTrack)
-4. [TransT](https://github.com/chenxin-dlut/TransT)
-5. [ToMP](https://github.com/visionml/pytracking)
-6. [RTS](https://github.com/visionml/pytracking)
-7. [SparseTT](https://github.com/fzh0917/SparseTT)
+![Structure of the Proposed BofN](/images/model.png)
+
+
+## Abstract
+We observe that the performance of SOTA visual trackers surprisingly strongly varies across different video attributes and
+datasets. No single tracker remains the best performer across all tracking attributes and datasets. To bridge this gap, for a given video
+sequence, we predict the “Best of the N Trackers”, called the BofN meta-tracker. At its core, a Tracking Performance Prediction
+Network (TP2N) selects a predicted best performing visual tracker for the given video sequence using only a few initial frames. We also
+introduce a frame-level BofN meta-tracker which keeps predicting best performer after regular temporal intervals. The TP2N is based
+on self-supervised learning architectures MocoV2, SwAv, BT, and DINO; experiments show that the DINO with ViT-S as a backbone
+performs the best. The video-level BofN meta-tracker outperforms, by a large margin, existing SOTA trackers on nine standard
+benchmarks – LaSOT, TrackingNet, GOT-10K, VOT2019, VOT2021, VOT2022, UAV123, OTB100, and WebUAV-3M. Further
+improvement is achieved by the frame-level BofN meta-tracker effectively handling variations in the tracking scenarios within long
+sequences. For instance, on GOT-10k, BofN meta-tracker average overlap is 88.7% and 91.1% with video and frame-level settings
+respectively. The best performing tracker, RTS, achieves 85.20% AO. On VOT2022, BofN expected average overlap is 67.88% and
+70.98% with video and frame level settings, compared to the best performing ARTrack, 64.12%. This work also presents an extensive
+evaluation of competitive tracking methods on all commonly used benchmarks, following their protocols.
+
+## Methodology
+
+Please find details in our paper which can be accessed here....
+
+### Trackers Utilized in This Work: 
+
+[ARDiMP](https://github.com/MasterBin-IIAU/AlphaRefine) | [KeepTrack](https://github.com/visionml/pytracking) | [STMTrack](https://github.com/fzh0917/STMTrack) | [TransT](https://github.com/chenxin-dlut/TransT) | [ToMP](https://github.com/visionml/pytracking)
+| [RTS](https://github.com/visionml/pytracking) | [SparseTT](https://github.com/fzh0917/SparseTT)
+
+## Results
+
+![Results](/images/plots.png)
+
 
 ## Environment Setup
 
