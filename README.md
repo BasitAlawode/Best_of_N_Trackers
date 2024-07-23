@@ -1,8 +1,10 @@
--- Repository still under construction...
+## ...Repository still under construction...
 
 # Predicting the Best of the *N* Visual Trackers
 
-This repository provides all codes and resources on our work on **Predicting the best of _N_ Trackers (*BofN*)**.
+ - This repository provides all codes and resources on our work on **Predicting the best of _N_ Trackers (*BofN*)**.
+
+ - [Paper Link](https://arxiv.org/abs/2407.15707)
 
 
 ![Structure of the Proposed BofN](/images/model.png)
@@ -96,4 +98,22 @@ python main_eval.py
 ```
 
 NOTE: This will run the main trackers and also run the best of them on the videos using both ResNet and ViT backbones.
+
+## Citation
  
+ If you find our work useful for your research, please consider citing:
+
+```bibtex
+@article{Alawode2024,
+    archivePrefix = {arXiv},
+    arxivId = {2407.15707},
+    author = {Alawode, Basit and Javed, Sajid and Mahmood, Arif and Matas, Jiri},
+    eprint = {2407.15707},
+    number = {8},
+    pages = {1--12},
+    title = {{Predicting the Best of N Visual Trackers}},
+    url = {http://arxiv.org/abs/2407.15707},
+    volume = {14},
+    year = {2024}
+}
+```
