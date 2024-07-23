@@ -4,7 +4,7 @@
 
  - This repository provides all codes and resources on our work on **Predicting the best of _N_ Trackers (*BofN*)**.
 
- <p align="center">
+<p align="center">
 <a href="https://arxiv.org/abs/2407.15707"><img src="https://img.shields.io/badge/arXiv-Paper_Link-blue"></a>
 </p>
 
