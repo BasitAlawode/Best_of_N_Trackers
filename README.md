@@ -4,8 +4,9 @@
 
  - This repository provides all codes and resources on our work on **Predicting the best of _N_ Trackers (*BofN*)**.
 
- - [Paper Link](https://arxiv.org/abs/2407.15707)
-
+ <p align="center">
+<a href="https://arxiv.org/abs/2407.15707"><img src="https://img.shields.io/badge/arXiv-Paper-<color>"></a>
+</p>
 
 ![Structure of the Proposed BofN](/images/model.png)
 
@@ -27,9 +28,9 @@ evaluation of competitive tracking methods on all commonly used benchmarks, foll
 
 ## Methodology
 
-Please find details in our paper which can be accessed here....
+Please find details in our paper which can be accessed [here](https://arxiv.org/abs/2407.15707).
 
-### Trackers Utilized in This Work: 
+### This work utilized the following trackers and others: 
 
 [ARDiMP](https://github.com/MasterBin-IIAU/AlphaRefine) | [KeepTrack](https://github.com/visionml/pytracking) | [STMTrack](https://github.com/fzh0917/STMTrack) | [TransT](https://github.com/chenxin-dlut/TransT) | [ToMP](https://github.com/visionml/pytracking)
 | [RTS](https://github.com/visionml/pytracking) | [SparseTT](https://github.com/fzh0917/SparseTT)
