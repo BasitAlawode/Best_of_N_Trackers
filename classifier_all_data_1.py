@@ -187,8 +187,9 @@ class Predictor(nn.Module):
         
         self.transforms = transforms.Compose([
             transforms.Lambda(lambda t: t/255),
-            transforms.Normalize((0.485, 0.456, 0.406), 
-                                 (0.229, 0.224, 0.225))])
+            #transforms.Normalize((0.485, 0.456, 0.406), 
+            #                     (0.229, 0.224, 0.225))
+            ])
               
         self.backbone = timm.create_model('resnetv2_50', 
                                           pretrained=True, num_classes=0)

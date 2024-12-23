@@ -60,7 +60,7 @@ class UTBVideo(Video):
 class UTBDataset(Dataset):
     """
     Args:
-        name: dataset name
+        name: dataset name, should be 'OTB100', 'CVPR13', 'OTB50'
         dataset_root: dataset root
         load_img: wether to load all imgs
     """
@@ -80,7 +80,7 @@ class UTBDataset(Dataset):
                                           meta_data[video]['init_rect'],
                                           meta_data[video]['img_names'],
                                           meta_data[video]['gt_rect'],
-                                          meta_data[video]['attr'],
+                                          None,
                                           load_img)
 
         # set attr

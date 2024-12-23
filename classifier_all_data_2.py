@@ -186,8 +186,9 @@ class Predictor(nn.Module):
         
         self.transforms = transforms.Compose([
             transforms.Lambda(lambda t: t/255),
-            transforms.Normalize((0.485, 0.456, 0.406), 
-                                 (0.229, 0.224, 0.225))])
+            #transforms.Normalize((0.485, 0.456, 0.406), 
+            #                     (0.229, 0.224, 0.225))
+            ])
         
         self.backbone = timm.create_model('vit_small_patch16_224', 
                                           pretrained=True, num_classes=0)

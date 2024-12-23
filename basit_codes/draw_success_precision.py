@@ -7,7 +7,7 @@ rc('text', usetex=True)
 import sys
 sys.path.append("toolkit")
 
-from basit_codes.utils import COLOR, LINE_STYLE
+from toolkit.visualization.draw_utils import COLOR, LINE_STYLE
 
 def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
         norm_precision_ret=None, bold_name=None, axis=[0, 1], show_top=15, legend_cols=1):
@@ -35,19 +35,21 @@ def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
     for idx, tracker_name in enumerate(success_ret.keys()):
         value = [v for k, v in success_ret[tracker_name].items() if k in videos]
         success[tracker_name] = np.mean(value)
-        #tracker_color[tracker_name] = COLOR[idx]
-        #tracker_linestyle[tracker_name] = LINE_STYLE[idx]
+        tracker_color[tracker_name] = COLOR[idx]
+        tracker_linestyle[tracker_name] = LINE_STYLE[idx]
 
 
     for idx, (tracker_name, auc) in  \
             enumerate(sorted(success.items(), key=lambda x:x[1], reverse=True)[:show_top]):
-        if tracker_name == bold_name:
-            label = r"\textbf{[%.3f] %s}" % (auc, tracker_name)
-        else:
-            label = "[%.3f] " % (auc) + tracker_name
+        
+        label = "[%.3f] " % (auc) + tracker_name
+        if bold_name is not None: 
+            if tracker_name in bold_name:
+                label = r"\textbf{[%.3f] %s}" % (auc, tracker_name)
+
         value = [v for k, v in success_ret[tracker_name].items() if k in videos]
         plt.plot(thresholds, np.mean(value, axis=0),
-                color=COLOR[idx], linestyle=LINE_STYLE[idx],\
+                color=tracker_color[tracker_name], linestyle=tracker_linestyle[tracker_name],\
                         label=label, linewidth=2)
 
     ax.legend(loc='best', labelspacing=0.2, ncol=legend_cols, fontsize=1.6*font_size)
@@ -66,8 +68,6 @@ def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
     plt.savefig(f"trackers_results/{name}/plots/success_plot_{name}.png", 
                     bbox_inches = 'tight', pad_inches = 0.05)
     plt.savefig(f"trackers_results/{name}/plots/success_plot_{name}.pdf", format="pdf", 
-                    bbox_inches = 'tight', pad_inches = 0.05)
-    plt.savefig(f"trackers_results/{name}/plots/success_plot_{name}.eps", format="eps", 
                     bbox_inches = 'tight', pad_inches = 0.05)
 
     if precision_ret:
@@ -91,13 +91,15 @@ def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
             precision[tracker_name] = np.mean(value, axis=0)[20]
         for idx, (tracker_name, pre) in \
                 enumerate(sorted(precision.items(), key=lambda x:x[1], reverse=True)[:show_top]):
-            if tracker_name == bold_name:
-                label = r"\textbf{[%.3f] %s}" % (pre, tracker_name)
-            else:
-                label = "[%.3f] " % (pre) + tracker_name
+            
+            label = "[%.3f] " % (pre) + tracker_name
+            if bold_name is not None: 
+                if tracker_name in bold_name:
+                    label = r"\textbf{[%.3f] %s}" % (pre, tracker_name)
+                    
             value = [v for k, v in precision_ret[tracker_name].items() if k in videos]
             plt.plot(thresholds, np.mean(value, axis=0),
-                    color=COLOR[idx], linestyle=LINE_STYLE[idx],\
+                    color=tracker_color[tracker_name], linestyle=tracker_linestyle[tracker_name],\
                         label=label, linewidth=2)
             
         ax.legend(loc='best', labelspacing=0.2, ncol=legend_cols, fontsize=1.6*font_size)
@@ -116,15 +118,13 @@ def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
                       bbox_inches = 'tight', pad_inches = 0.05)
         plt.savefig(f"trackers_results/{name}/plots/precision_plot_{name}.pdf", format="pdf",
                       bbox_inches = 'tight', pad_inches = 0.05)
-        plt.savefig(f"trackers_results/{name}/plots/precision_plot_{name}.eps", format="eps",
-                      bbox_inches = 'tight', pad_inches = 0.05)
 
     # norm precision plot
     if norm_precision_ret:
         fig, ax = plt.subplots(figsize=(font_size,font_size))
         ax.grid(b=True)
         plt.xlabel('Location error threshold', fontsize=3*font_size)
-        plt.ylabel('Normalized Precision', fontsize=3*font_size)
+        plt.ylabel('Precision', fontsize=3*font_size)
         if attr == 'ALL':
             plt.title(r'\textbf{Normalized Precision plots of OPE on %s}' % (name), 
                       fontsize=2*font_size)
@@ -141,13 +141,15 @@ def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
             norm_precision[tracker_name] = np.mean(value, axis=0)[20]
         for idx, (tracker_name, pre) in \
                 enumerate(sorted(norm_precision.items(), key=lambda x:x[1], reverse=True)[:show_top]):
-            if tracker_name == bold_name:
-                label = r"\textbf{[%.3f] %s}" % (pre, tracker_name)
-            else:
-                label = "[%.3f] " % (pre) + tracker_name
+            
+            label = "[%.3f] " % (pre) + tracker_name
+            if bold_name is not None:
+                if tracker_name in bold_name:
+                    label = r"\textbf{[%.3f] %s}" % (pre, tracker_name)
+                
             value = [v for k, v in norm_precision_ret[tracker_name].items() if k in videos]
             plt.plot(thresholds, np.mean(value, axis=0),
-                    color=COLOR[idx], linestyle=LINE_STYLE[idx],\
+                    color=tracker_color[tracker_name], linestyle=tracker_linestyle[tracker_name],\
                         label=label, linewidth=2)
         ax.legend(loc='best', labelspacing=0.2, ncol=legend_cols, fontsize=1.6*font_size)
         ax.autoscale(enable=True, axis='both', tight=True)
@@ -164,7 +166,5 @@ def draw_success_precision(success_ret, name, videos, attr, precision_ret=None,
         plt.savefig(f"trackers_results/{name}/plots/norm_precision_plot_{name}.png",
                       bbox_inches = 'tight', pad_inches = 0.05)
         plt.savefig(f"trackers_results/{name}/plots/norm_precision_plot_{name}.pdf", format="pdf",
-                      bbox_inches = 'tight', pad_inches = 0.05)
-        plt.savefig(f"trackers_results/{name}/plots/norm_precision_plot_{name}.eps", format="eps",
                       bbox_inches = 'tight', pad_inches = 0.05)
     

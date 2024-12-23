@@ -1,42 +1,87 @@
-COLOR = ((1, 0, 0), (1, 0, 1), (1, 1, 0), (0, 162/255, 232/255), (0.5, 0.5, 0.5),
-         (0.5, 0.5, 0), (0, 0, 1), (0, 1, 1), (136/255, 0, 21/255), (255/255, 127/255, 39/255),
-         (0, 0, 0), (0, 0, 0.5), (0, 0.5, 0), (0, 0.5, 0.5), (0.5, 0, 0),
-         (0.5, 0, 0.5), (0, 127/255, 21/255), (127/255, 39/255, 0), (1, 0.5, 0), (0.25, 0.25, 0.5),
-         (1, 0.25, 0.25), (1, 0.5, 0.5), (0.5, 1, 0), (0.5, 1, 0.5), (0.5, 1, 1), (0.5, 1, 1),
-         (0.5, 0, 0.25), (0.25, 1, 0.5), (0.5, 0.25, 0))
-
-LINE_STYLE = ['-', '--', ':', '-', '--', ':', '-', '--', ':', '-', 
-              '-', '--', ':', '-', '--', ':', '-', '--', ':', '-',
-              '-', '--', ':', '-', '--', ':', '-', '--', ':', '-']
-
-MARKER_STYLE = ['o', 'v', '<', '*', 'D', 'x', '.', 'x', '<', '.',
-                '8', 's', 'p', 'h', 'H', '+', 'D', 'd', '1', '2',
-                'o', 'v', '<', '*', 'D', 'x', '.', 'x', '<', '.']
-
-from natsort import natsorted
-from glob import glob
+import torch
+import os
 import numpy as np
+import random
 
-def get_trackers_fps(trackers, track_time_dir, dataset_name):
-    trackers_fps = {}
-    for tracker in trackers:
-        tracker_time_dir = f"{track_time_dir}/{dataset_name}/{tracker}"
-        
-        # List all tracking time files
-        track_times_files = natsorted(glob(f"{tracker_time_dir}/*.txt"))
-        
-        all_track_times = []
-        for t in track_times_files:
-            with open(t) as f:
-                track_times = f.readlines()
-            
-            # Append all times
-            for time in track_times: 
-                all_track_times.append(float(time.split('\n')[0])) 
-            
-        avg_track_time = sum(all_track_times)/len(all_track_times)
-        avg_fps = np.around(1/avg_track_time, decimals=2)
-        
-        trackers_fps[tracker] = avg_fps
+def seed_everything(seed):
+    """
+    Seeds basic parameters for reproductibility of results
     
-    return trackers_fps
+    Arguments:
+        seed {int} -- Number of the seed
+    """
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+def set_requires_grad(model: torch.nn.Module, requires_grad=True):
+    def get_all_layers(block):
+        # get children form model!
+        children = list(block.children())
+        flatt_children = []
+        if children == []:
+            # if model has no children; model is last child! :O
+            return block
+        else:
+            # look for children from children... to the last child!
+            for child in children:
+                try:
+                    flatt_children.extend(get_all_layers(child))
+                except TypeError:
+                    flatt_children.append(get_all_layers(child))
+        
+        return flatt_children
+
+    total_params = 0
+    for l in get_all_layers(model):        # Set requires_grad
+        for param in l.parameters():
+            param.requires_grad = requires_grad
+            total_params += param.numel()
+    
+    return total_params
+
+def customize_pytracking_tracker(tracker, debug=None, visdom_info=None, 
+                                 model_name="pretrained_model.pth"):
+    if tracker.name == 'trdimp':
+        from TransformerTrack.pytracking.evaluation.multi_object_wrapper import MultiObjectWrapper
+        params = tracker.get_parameters()
+        params.net.net_path = model_name
+    elif tracker.name == 'atom':
+        from pytracking.evaluation.multi_object_wrapper import MultiObjectWrapper
+        params = tracker.get_parameters()
+        params.features.features[0].net_path = model_name
+    elif tracker.name == 'tomp':
+        from pytracking.evaluation.multi_object_wrapper import MultiObjectWrapper
+        params = tracker.get_parameters()
+        params.net.net_path = model_name
+
+    debug_ = debug
+    if debug is None:
+        debug_ = getattr(params, 'debug', 0)
+    params.debug = debug_
+
+    params.tracker_name = tracker.name
+    params.param_name = tracker.parameter_name
+
+    if tracker.display_name != 'stark':
+        tracker._init_visdom(visdom_info, debug_)
+
+    multiobj_mode = getattr(params, 'multiobj_mode', getattr(tracker.tracker_class, \
+        'multiobj_mode', 'default'))
+
+    if multiobj_mode == 'default':
+        tracker = tracker.create_tracker(params)
+        if hasattr(tracker, 'initialize_features'):
+            tracker.initialize_features()
+
+    elif multiobj_mode == 'parallel':
+        tracker = MultiObjectWrapper(tracker.tracker_class, params, tracker.visdom, \
+             fast_load=True)
+    else:
+        raise ValueError('Unknown multi object mode {}'.format(multiobj_mode))
+
+    return tracker
